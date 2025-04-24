@@ -7,5 +7,5 @@ node_modules
 # Postgres volume
 .postgres-data
  
- # Tests
- coverage
+# Tests
+coverage
