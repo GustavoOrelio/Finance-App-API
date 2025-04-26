@@ -1,24 +1,37 @@
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library.js'
-import { prisma } from '../../../../prisma/prisma.js'
-import { UserNotFoundError } from '../../../errors/user.js'
+import { UserNotFoundError } from '../../errors/user.js'
+import {
+    checkIfIdIsValid,
+    invalidIdResponse,
+    userNotFoundResponse,
+    ok,
+    serverError,
+} from '../helpers/index.js'
 
-export class PostgresDeleteUserRepository {
-    async execute(userId) {
+export class DeleteUserController {
+    constructor(deleteUserUseCase) {
+        this.deleteUserUseCase = deleteUserUseCase
+    }
+
+    async execute(httpRequest) {
         try {
-            return await prisma.user.delete({
-                where: {
-                    id: userId,
-                },
-            })
-        } catch (error) {
-            if (error instanceof PrismaClientKnownRequestError) {
-                // P2025 = "An operation failed because it depends on one or more records that were required but not found" (from Prisma docs)
-                if (error.code === 'P2025') {
-                    throw new UserNotFoundError(userId)
-                }
+            const userId = httpRequest.params.userId
+
+            const idIsValid = checkIfIdIsValid(userId)
+
+            if (!idIsValid) {
+                return invalidIdResponse()
             }
 
-            throw error
+            const deletedUser = await this.deleteUserUseCase.execute(userId)
+
+            return ok(deletedUser)
+        } catch (error) {
+            if (error instanceof UserNotFoundError) {
+                return userNotFoundResponse()
+            }
+
+            console.error(error)
+            return serverError()
         }
     }
 }
