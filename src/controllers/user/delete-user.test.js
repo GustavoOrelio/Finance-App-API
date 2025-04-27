@@ -1,8 +1,8 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
-import { prisma } from '../../../../prisma/prisma'
-import { user } from '../../../tests'
-import { PostgresDeleteUserRepository } from './delete-user'
-import { UserNotFoundError } from '../../../errors'
+import { prisma } from '../../../prisma/prisma'
+import { user } from '../../tests'
+import { PostgresDeleteUserRepository } from '../../repositories/postgres/user/delete-user'
+import { UserNotFoundError } from '../../errors'
 
 describe('PostgresDeleteUserRepository', () => {
     it('should delete a user on db', async () => {
