@@ -21,7 +21,7 @@ describe('PostgresDeleteUserRepository', () => {
         })
 
         const sut = new PostgresDeleteUserRepository()
-        const prismaSpy = jest.spyOn(prisma.user, 'delete')
+        const prismaSpy = import.meta.jest.spyOn(prisma.user, 'delete')
 
         await sut.execute(user.id)
 
